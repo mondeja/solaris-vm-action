@@ -15,6 +15,7 @@ jobs:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v2
+      - run: networksetup -listallhardwareports
       - uses: mondeja/solaris-vm-action@v1
         with:
           run: sh tests.sh
