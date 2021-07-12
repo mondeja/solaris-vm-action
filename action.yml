@@ -1,0 +1,23 @@
+name: Solaris VM
+description: Run your workflow job on a Solaris VM
+author: mondeja
+inputs:
+  run:
+    description: Commands to run in the Solaris VM.
+    required: true
+  cpus:
+    description: Number of CPUs for the machine (1 as default).
+    required: false
+  memory:
+    description: RAM memory for the machine.
+    required: false
+
+runs:
+  using: "composite"
+  steps:
+    - run: INPUT_COMMANDS="${{ inputs.run }}" INPUT_CPUS="${{ inputs.cpus }}" INPUT_MEMORY="${{ inputs.memory }}" sh {{ github.action_path }}/run.sh
+      shell: sh
+
+branding:
+  icon: 'box'
+  color: 'red'

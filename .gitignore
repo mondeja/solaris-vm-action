@@ -1,0 +1,3 @@
+*.ova
+*.zip
+!/ova/*.zip
