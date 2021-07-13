@@ -22,6 +22,12 @@ jobs:
     name: Solaris (SunOS) tests
     runs-on: macos-latest
     steps:
+      - uses: actions/checkout@v2
+      - uses: actions/cache@v2
+        with:
+          key: sol-11_4
+          path: |
+            sol-11_4.ova
       - uses: mondeja/solaris-vm-action@v1
         with:
           run: |

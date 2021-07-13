@@ -12,6 +12,11 @@ jobs:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v2
+      - uses: actions/cache@v2
+        with:
+          path: |
+            sol-11_4.ova
+          key: sol-11_4
       - uses: mondeja/solaris-vm-action@dev
         with:
           run: |
