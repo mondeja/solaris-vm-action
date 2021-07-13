@@ -19,3 +19,14 @@ jobs:
           run: |
             cat /etc/ssh/sshd_config
             sh tests.sh
+  test-dev:
+    name: Solaris (SunOS) tests
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: ifconfig
+      - uses: mondeja/solaris-vm-action@dev
+        with:
+          run: |
+            cat /etc/ssh/sshd_config
+            sh tests.sh

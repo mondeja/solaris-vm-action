@@ -170,7 +170,7 @@ main() {
   prepare_ssh_config
   #prepare_machine_state
   modify_vm
-  vboxmanage snapshot list --details
+  #vboxmanage snapshot list --details
   run_vm
   sync_files 1
   if [ -n "$INPUT_PREPARE" ]; then
