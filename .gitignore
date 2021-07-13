@@ -1,3 +1,4 @@
 *.ova
 *.zip
 !/ova/*.zip
+*.vbox-extpack
