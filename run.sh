@@ -168,9 +168,9 @@ main() {
   prepare_ova
   import_vm
   prepare_ssh_config
-  #prepare_machine_state
+  prepare_machine_state
   modify_vm
-  #vboxmanage snapshot list --details
+  vboxmanage $OVA_NAME snapshot list --details
   run_vm
   sync_files 1
   if [ -n "$INPUT_PREPARE" ]; then
