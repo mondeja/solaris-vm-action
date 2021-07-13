@@ -4,7 +4,7 @@ set -ex
 
 main() {
   exitcode=0
-  if [ "$(uname -a)" != "SunOS" ]; then
+  if [ "$(uname -a | cut -d' ' -f1)" != "SunOS" ]; then
     exitcode=1
   fi
   if [ "$(uname -o)" != "Solaris" ]; then

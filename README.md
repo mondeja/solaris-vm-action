@@ -25,14 +25,15 @@ jobs:
       - uses: mondeja/solaris-vm-action@v1
         with:
           memory: 2048
-          run: |
-            sh build.sh
-            sh test.sh
+          prepare: sh build.sh
+          run: sh test.sh
 ```
 
 ## Arguments
 
 - ``run`` (*required*): Commands to run, in multiple lines.
+- ``prepare``: Optional preparation commands run in the Solaris VM before main
+ execution.
 - ``cpus`` (1): Number of CPUs for the virtual machine.
 - ``memory`` (4096): RAM memory size for the virtual machine.
 

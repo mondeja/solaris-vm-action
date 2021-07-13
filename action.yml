@@ -5,6 +5,9 @@ inputs:
   run:
     description: Commands to run in the Solaris VM.
     required: true
+  prepare:
+    description: Preparation commands run in the Solaris VM before main execution.
+    required: false
   cpus:
     description: Number of CPUs for the machine (1 as default).
     required: false
@@ -15,7 +18,7 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - run: RUNNING_AS_ACTION=1 INPUT_COMMANDS="${{ inputs.run }}" INPUT_CPUS="${{ inputs.cpus }}" INPUT_MEMORY="${{ inputs.memory }}" sh ${{ github.action_path }}/run.sh
+    - run: INPUT_COMMANDS="${{ inputs.run }}" PREPARE_COMMANDS="${{ inputs.prepare }}" INPUT_CPUS="${{ inputs.cpus }}" INPUT_MEMORY="${{ inputs.memory }}" sh ${{ github.action_path }}/run.sh
       shell: sh
 
 branding:
