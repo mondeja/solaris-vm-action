@@ -8,7 +8,8 @@ OVA_URL="$OVA_REPO_URL/ova/sol-11_4-part[00-75].zip"
 OVA_NAME="sol-11_4-vbox"
 
 MACHINE_STATE_URL="$OVA_REPO_URL/machine-state-part[00-08].zip"
-DISK_SNAPSHOT_URL="$OVA_REPO_URL/{9bc906db-94e3-4f00-b63b-483ee9bba665}.vmdk"
+DISK_SNAPSHOT_FILENAME="{9bc906db-94e3-4f00-b63b-483ee9bba665}.vmdk"
+DISK_SNAPSHOT_URL="$OVA_REPO_URL/$DISK_SNAPSHOT_FILENAME"
 
 SSH_PORT=2223
 
@@ -41,8 +42,8 @@ download_machine_state_parts() {
   curl -Z \
     --parallel-max 12 \
     $MACHINE_STATE_URL \
-    $DISK_SNAPSHOT_URL \
     -o 'machine-state-part#1.zip'
+  wget $DISK_SNAPSHOT_URL
 }
 
 clean_machine_state_parts() {
@@ -52,6 +53,7 @@ clean_machine_state_parts() {
 extract_machine_state_parts() {
   cat machine-state-part* > machine-state.zip
   unzip machine-state.zip
+  ls
   rm -f machine-state.zip
   clean_machine_state_parts
 }
@@ -62,10 +64,11 @@ prepare_machine_state() {
 
   vbox_vms_folder="$(get_vbox_vms_folder)"
   ls "$vbox_vms_folder"
+  ls "$vbox_vms_folder/$OVA_NAME"
   snapshots_folder="$vbox_vms_folder/$OVA_NAME/Snapshots/"
   mkdir -p "$snapshots_folder"
-  mv "{9bc906db-94e3-4f00-b63b-483ee9bba665}.vdmk" "$snapshots_folder"
-  mv "2021-07-13T15-37-44-220758000Z.sav" "$snapshots_folder"
+  mv -v "2021-07-13T15-37-44-220758000Z.sav" "$snapshots_folder"
+  mv -v "$DISK_SNAPSHOT_FILENAME" "$snapshots_folder"
 }
 
 clean_ova_parts() {
@@ -139,7 +142,7 @@ sync_files() {
     $PWD \
     solaris:/export/home/solaris && _sync=1 || _sync=0
   if [ "$_sync" -eq 0 ]; then
-    sleep 2
+    sleep 1
     if [ "$1" -gt "60" ]; then
       printf "Error starting the Solaris VM after 10 minutes." >&2
       printf " Timeout reached.\n" >&2
@@ -171,7 +174,7 @@ main() {
   prepare_ssh_config
   prepare_machine_state
   modify_vm
-  vboxmanage $OVA_NAME snapshot list --details
+  vboxmanage snapshot $OVA_NAME list --details
   run_vm
   sync_files 1
   if [ -n "$INPUT_PREPARE" ]; then
