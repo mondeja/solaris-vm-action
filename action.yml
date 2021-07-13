@@ -15,7 +15,7 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - run: INPUT_COMMANDS="${{ inputs.run }}" INPUT_CPUS="${{ inputs.cpus }}" INPUT_MEMORY="${{ inputs.memory }}" sh ${{ github.action_path }}/run.sh
+    - run: RUNNING_AS_ACTION=1 INPUT_COMMANDS="${{ inputs.run }}" INPUT_CPUS="${{ inputs.cpus }}" INPUT_MEMORY="${{ inputs.memory }}" sh ${{ github.action_path }}/run.sh
       shell: sh
 
 branding:

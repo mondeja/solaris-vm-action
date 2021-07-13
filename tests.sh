@@ -1,6 +1,6 @@
 #!/bin/sh
 
-set -x
+set -ex
 
 main() {
   exitcode=0
