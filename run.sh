@@ -30,7 +30,7 @@ get_vbox_vms_folder() {
 
 install_vbox_guest_additions() {
   wget $VBOX_GA_URL
-  vboxmanage extpack install --replace Oracle_VM_VirtualBox_Extension_Pack-6.1.14.vbox-extpack
+  echo "y" | vboxmanage extpack install --replace Oracle_VM_VirtualBox_Extension_Pack-6.1.14.vbox-extpack
   rm -f Oracle_VM_VirtualBox_Extension_Pack-6.1.14.vbox-extpack
 }
 
