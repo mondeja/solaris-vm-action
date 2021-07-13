@@ -19,6 +19,8 @@ jobs:
           key: sol-11_4
       - uses: mondeja/solaris-vm-action@dev
         with:
+          cpus: 2
+          memory: 2048
           run: |
             cat /etc/ssh/sshd_config
             sh tests.sh

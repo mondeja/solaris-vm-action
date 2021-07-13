@@ -7,10 +7,7 @@ VBOX_GA_URL="https://download.virtualbox.org/virtualbox/6.1.14/Oracle_VM_Virtual
 OVA_URL="$OVA_REPO_URL/ova/sol-11_4-part[00-75].zip"
 OVA_NAME="sol-11_4-vbox"
 
-MACHINE_STATE_URL="$OVA_REPO_URL/machine-state-part[00-08].zip"
-DISK_SNAPSHOT_FILENAME="{9bc906db-94e3-4f00-b63b-483ee9bba665}.vmdk"
-DISK_SNAPSHOT_URL="$OVA_REPO_URL/$DISK_SNAPSHOT_FILENAME"
-
+SSH_HOST="solaris"
 SSH_PORT=2223
 
 if [ -z "$INPUT_CPUS" ]; then
@@ -35,40 +32,6 @@ install_vbox_guest_additions() {
   wget $VBOX_GA_URL
   vboxmanage extpack install --replace Oracle_VM_VirtualBox_Extension_Pack-6.1.14.vbox-extpack
   rm -f Oracle_VM_VirtualBox_Extension_Pack-6.1.14.vbox-extpack
-}
-
-download_machine_state_parts() {
-  clean_machine_state_parts
-  curl -Z \
-    --parallel-max 12 \
-    $MACHINE_STATE_URL \
-    -o 'machine-state-part#1.zip'
-  wget $DISK_SNAPSHOT_URL
-}
-
-clean_machine_state_parts() {
-  rm -f machine-state-part*.zip
-}
-
-extract_machine_state_parts() {
-  cat machine-state-part* > machine-state.zip
-  unzip machine-state.zip
-  ls
-  rm -f machine-state.zip
-  clean_machine_state_parts
-}
-
-prepare_machine_state() {
-  download_machine_state_parts
-  extract_machine_state_parts
-
-  vbox_vms_folder="$(get_vbox_vms_folder)"
-  ls "$vbox_vms_folder"
-  ls "$vbox_vms_folder/$OVA_NAME"
-  snapshots_folder="$vbox_vms_folder/$OVA_NAME/Snapshots/"
-  mkdir -p "$snapshots_folder"
-  mv -v "2021-07-13T15-37-44-220758000Z.sav" "$snapshots_folder"
-  mv -v "$DISK_SNAPSHOT_FILENAME" "$snapshots_folder"
 }
 
 clean_ova_parts() {
@@ -117,16 +80,17 @@ prepare_ssh_config() {
 }
 
 import_vm() {
-  vboxmanage import sol-11_4.ova
-}
-
-modify_vm() {
+  _cpus_argument=""
   if [ "$INPUT_CPUS" -ne 1 ]; then
-    vboxmanage modifyvm $OVA_NAME --cpus "$INPUT_CPUS"
+    _cpus_argument="--cpus $INPUT_CPUS"
   fi
+
+  _memory_argument=""
   if [ "$INPUT_MEMORY" -ne 4096 ]; then
-    vboxmanage modifyvm $OVA_NAME --mem "$INPUT_MEMORY"
+    _memory_argument="--mem $INPUT_MEMORY"
   fi
+
+  vboxmanage import sol-11_4.ova  $_cpus_argument $_memory_argument
 }
 
 run_vm() {
@@ -140,7 +104,7 @@ sync_files() {
     --exclude sol-11_4.ova \
     --exclude sol-11_4-backup.zip \
     $PWD \
-    solaris:/export/home/solaris && _sync=1 || _sync=0
+    $SSH_HOST:/export/home/solaris && _sync=1 || _sync=0
   if [ "$_sync" -eq 0 ]; then
     sleep 1
     if [ "$1" -gt "60" ]; then
@@ -154,27 +118,24 @@ sync_files() {
 }
 
 run_prepare() {
-  ssh -t solaris << EOF
+  ssh -t $SSH_HOST << EOF
 cd /export/home/solaris/$CURRENT_DIR_BASENAME
 $PREPARE_COMMANDS
 EOF
 }
 
 run_commands() {
-  ssh -t solaris << EOF
+  ssh -t $SSH_HOST << EOF
 cd /export/home/solaris/$CURRENT_DIR_BASENAME
 $INPUT_COMMANDS
 EOF
 }
 
 main() {
-  #install_vbox_guest_additions
+  install_vbox_guest_additions
   prepare_ova
   import_vm
   prepare_ssh_config
-  prepare_machine_state
-  modify_vm
-  vboxmanage snapshot $OVA_NAME list --details
   run_vm
   sync_files 1
   if [ -n "$INPUT_PREPARE" ]; then

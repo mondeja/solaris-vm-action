@@ -35,6 +35,11 @@ jobs:
             sh test.sh
 ```
 
+> The [`action/cache`][action-cache-github-link] step saves ~3 min for
+ subsequents runs of the action under the same branch, but takes 3.5GB of your
+ cache storage when each repository has a limit of 5GB (see
+ [Cache Limits][cache-limits-link]).
+
 ## Arguments
 
 - ``run`` (*required*): Commands to run, in multiple lines.
@@ -46,3 +51,5 @@ jobs:
 
 [tests-image]: https://img.shields.io/github/workflow/status/mondeja/solaris-vm-action/CI/v1?label=tests&logo=github
 [tests-link]: https://github.com/mondeja/solaris-vm-action/actions/workflows/ci.yml
+[action-cache-github-link]: https://github.com/actions/cache
+[cache-limits-link]: https://github.com/actions/cache#cache-limits
