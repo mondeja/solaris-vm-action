@@ -61,7 +61,8 @@ prepare_machine_state() {
   extract_machine_state_parts
 
   vbox_vms_folder="$(get_vbox_vms_folder)"
-  snapshots_folder="$vbox_vms_folder/$OVA_NAME/Snapshots"
+  ls "$vbox_vms_folder"
+  snapshots_folder="$vbox_vms_folder/$OVA_NAME/Snapshots/"
   mkdir -p "$snapshots_folder"
   mv "{9bc906db-94e3-4f00-b63b-483ee9bba665}.vdmk" "$snapshots_folder"
   mv "2021-07-13T15-37-44-220758000Z.sav" "$snapshots_folder"
