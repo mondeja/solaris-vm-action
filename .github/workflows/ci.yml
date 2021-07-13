@@ -4,7 +4,6 @@ on:
   push:
     tags:
       - v*
-      - dev
   pull_request:
   workflow_dispatch:
 
