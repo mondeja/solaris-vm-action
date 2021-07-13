@@ -1,9 +1,14 @@
 #!/bin/sh
 
+OVA_REPO_URL="https://raw.githubusercontent.com/mondeja/solaris-vm-action-ova/master"
+
 VBOX_GA_URL="https://download.virtualbox.org/virtualbox/6.1.14/Oracle_VM_VirtualBox_Extension_Pack-6.1.14.vbox-extpack"
 
-OVA_URL="https://raw.githubusercontent.com/mondeja/solaris-vm-action-ova/master/ova/sol-11_4-part[00-75].zip"
+OVA_URL="$OVA_REPO_URL/ova/sol-11_4-part[00-75].zip"
 OVA_NAME="sol-11_4-vbox"
+
+MACHINE_STATE_URL="$OVA_REPO_URL/machine-state-part[00-08].zip"
+DISK_SNAPSHOT_URL="$OVA_REPO_URL/{9bc906db-94e3-4f00-b63b-483ee9bba665}.vmdk"
 
 SSH_PORT=2223
 
@@ -18,10 +23,50 @@ CURRENT_DIR_BASENAME="$(pwd | awk -F/ '{print $NF}')"
 
 set -ex
 
+get_vbox_vms_folder() {
+  vboxmanage list systemproperties \
+  | grep "Default machine folder:" \
+  | cut -f2 -d":" \
+  | sed 's/^ *//g'
+}
+
 install_vbox_guest_additions() {
   wget $VBOX_GA_URL
-  echo y | vboxmanage extpack install --replace Oracle_VM_VirtualBox_Extension_Pack-6.1.14.vbox-extpack
+  vboxmanage extpack install --replace Oracle_VM_VirtualBox_Extension_Pack-6.1.14.vbox-extpack
   rm -f Oracle_VM_VirtualBox_Extension_Pack-6.1.14.vbox-extpack
+}
+
+download_machine_state_parts() {
+  clean_machine_state_parts
+  curl -Z \
+    --parallel-max 12 \
+    $MACHINE_STATE_URL \
+    $DISK_SNAPSHOT_URL \
+    -o 'machine-state-part#1.zip'
+}
+
+clean_machine_state_parts() {
+  rm -f machine-state-part*.zip
+}
+
+extract_machine_state_parts() {
+  cat machine-state-part* > machine-state.zip
+  unzip machine-state.zip
+  rm -f machine-state.zip
+  clean_machine_state_parts
+
+
+}
+
+prepare_machine_state() {
+  download_machine_state_parts
+  extract_machine_state_parts
+
+  vbox_vms_folder="$(get_vbox_vms_folder)"
+  snapshots_folder="$vbox_vms_folder/$OVA_NAME/Snapshots"
+  mkdir -p "$snapshots_folder"
+  mv "{9bc906db-94e3-4f00-b63b-483ee9bba665}.vdmk" "$snapshots_folder"
+  mv "2021-07-13T15-37-44-220758000Z.sav" "$snapshots_folder"
 }
 
 clean_ova_parts() {
@@ -121,11 +166,13 @@ EOF
 }
 
 main() {
-  install_vbox_guest_additions
+  #install_vbox_guest_additions
   prepare_ova
   import_vm
   prepare_ssh_config
+  prepare_machine_state
   modify_vm
+  vboxmanage snapshot list --details
   run_vm
   sync_files 1
   if [ -n "$INPUT_PREPARE" ]; then
