@@ -1,5 +1,5 @@
 name: Solaris VM
-description: Run your workflow job on a Solaris VM
+description: Run your workflow job on a Solaris VM.
 author: mondeja
 inputs:
   run:

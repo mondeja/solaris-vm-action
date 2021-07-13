@@ -18,15 +18,15 @@ on:
   workflow_dispatch:
 
 jobs:
-  sun_tools-tests:
+  sunos-tests:
     name: Solaris (SunOS) tests
     runs-on: macos-latest
     steps:
       - uses: mondeja/solaris-vm-action@v1
         with:
-          memory: 2048
-          prepare: sh build.sh
-          run: sh test.sh
+          run: |
+            sh build.sh
+            sh test.sh
 ```
 
 ## Arguments
@@ -38,5 +38,5 @@ jobs:
 - ``memory`` (4096): RAM memory size for the virtual machine.
 
 
-[tests-image]: https://img.shields.io/github/workflow/status/mondeja/solaris-vm-action/CI?logo=github&label=tests
-[tests-link]: https://github.com/mondeja/solaris-vm-action/actions?query=workflow%3ACI
+[tests-image]: https://img.shields.io/github/workflow/status/mondeja/solaris-vm-action/CI/v1?label=tests&logo=github
+[tests-link]: https://github.com/mondeja/solaris-vm-action/actions/workflows/ci.yml

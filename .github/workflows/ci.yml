@@ -16,10 +16,6 @@ jobs:
       - run: ifconfig
       - uses: mondeja/solaris-vm-action@v1
         with:
-          cpus: 2
-          prepare: |
-            uname -a
-            uname -o
           run: |
-            echo hello
+            cat /etc/ssh/sshd_config
             sh tests.sh

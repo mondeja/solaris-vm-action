@@ -1,10 +1,9 @@
 #!/bin/sh
 
+VBOX_GA_URL="https://download.virtualbox.org/virtualbox/6.1.14/Oracle_VM_VirtualBox_Extension_Pack-6.1.14.vbox-extpack"
+
 OVA_URL="https://raw.githubusercontent.com/mondeja/solaris-vm-action-ova/master/ova/sol-11_4-part[00-75].zip"
 OVA_NAME="sol-11_4-vbox"
-
-MACOSX=0
-LINUX=0
 
 SSH_PORT=2223
 
@@ -17,17 +16,13 @@ fi
 
 CURRENT_DIR_BASENAME="$(pwd | awk -F/ '{print $NF}')"
 
-case "$(uname -s)" in
-   Darwin)
-     MACOSX=1
-     ;;
-
-   Linux)
-     LINUX=1
-     ;;
-esac
-
 set -ex
+
+install_vbox_guest_additions() {
+  wget $VBOX_GA_URL
+  echo y | vboxmanage extpack install --replace Oracle_VM_VirtualBox_Extension_Pack-6.1.14.vbox-extpack
+  rm -f Oracle_VM_VirtualBox_Extension_Pack-6.1.14.vbox-extpack
+}
 
 clean_ova_parts() {
   rm -f sol-11_4-part*.zip
@@ -70,7 +65,7 @@ prepare_ssh_config() {
   wget https://raw.githubusercontent.com/mondeja/solaris-vm-action-ova/master/id_rsa.pub \
     -o /tmp/id_rsa.pub
   cat /tmp/id_rsa.pub > "$HOME/.ssh/authorized_keys"
-  rm -f /tmp/id_rsa.pub
+  rm -f /tmp/id_rsa.pub id_rsa.pub
   chmod 700 "$HOME/.ssh"
 }
 
@@ -100,7 +95,7 @@ sync_files() {
     $PWD \
     solaris:/export/home/solaris && _sync=1 || _sync=0
   if [ "$_sync" -eq 0 ]; then
-    sleep 10
+    sleep 2
     if [ "$1" -gt "60" ]; then
       printf "Error starting the Solaris VM after 10 minutes." >&2
       printf " Timeout reached.\n" >&2
@@ -113,7 +108,6 @@ sync_files() {
 
 run_prepare() {
   ssh -t solaris << EOF
-set -e
 cd /export/home/solaris/$CURRENT_DIR_BASENAME
 $PREPARE_COMMANDS
 EOF
@@ -121,13 +115,13 @@ EOF
 
 run_commands() {
   ssh -t solaris << EOF
-set -e
 cd /export/home/solaris/$CURRENT_DIR_BASENAME
 $INPUT_COMMANDS
 EOF
 }
 
 main() {
+  install_vbox_guest_additions
   prepare_ova
   import_vm
   prepare_ssh_config
