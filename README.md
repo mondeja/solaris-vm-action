@@ -35,7 +35,7 @@ jobs:
             sh test.sh
 ```
 
-> The [`action/cache`][action-cache-github-link] step saves ~3 min for
+> The optional [`action/cache`][action-cache-github-link] step saves ~3 min for
  subsequents runs of the action under the same branch, but takes 3.5GB of your
  cache storage when each repository has a limit of 5GB (see
  [Cache Limits][cache-limits-link]).
