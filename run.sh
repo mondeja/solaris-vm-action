@@ -83,10 +83,10 @@ run_vm() {
   vboxmanage startvm $OVA_NAME --type headless
 }
 
-sync_files() {
+copy_files_to_vm() {
   rsync \
     -avuzrtopgh \
-    --exclude _actions/mondeja/solaris-vm \
+    --exclude _actions/ \
     --exclude sol-11_4.ova \
     --exclude sol-11_4-backup.zip \
     --exclude sol-11_4.zip \
@@ -99,9 +99,16 @@ sync_files() {
       printf " Timeout reached.\n" >&2
       exit 1
     else
-      sync_files "$(( $1 + 1 ))"
+      copy_files_to_vm "$(( $1 + 1 ))"
     fi
   fi;
+}
+
+copy_files_from_vm() {
+  rsync -avuzrtopgh \
+    "$SSH_HOST:/export/home/solaris/$CURRENT_DIR_BASENAME/*" \
+    $PWD
+  ls
 }
 
 run_prepare() {
@@ -124,11 +131,12 @@ main() {
   prepare_ssh_config
   modify_vm
   run_vm
-  sync_files 1
+  copy_files_to_vm 1
   if [ -n "$INPUT_PREPARE" ]; then
     run_prepare
   fi
   run_commands
+  copy_files_from_vm
 }
 
 main

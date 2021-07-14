@@ -10,6 +10,10 @@ main() {
   if [ "$(uname -o)" != "Solaris" ]; then
     exitcode=1
   fi
+
+  # copy_files_from_vm test
+  echo "foo" > bar.txt
+
   exit $exitcode
 }
 
