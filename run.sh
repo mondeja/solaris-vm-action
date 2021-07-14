@@ -86,10 +86,12 @@ run_vm() {
 copy_files_to_vm() {
   rsync \
     -avuzrtopgh \
-    --exclude _actions/ \
     --exclude sol-11_4.ova \
     --exclude sol-11_4-backup.zip \
     --exclude sol-11_4.zip \
+    --exclude _actions/ \
+    --exclude _PipelineMapping \
+    --exclude _temp \
     $PWD \
     $SSH_HOST:/export/home/solaris && _sync=1 || _sync=0
   if [ "$_sync" -eq 0 ]; then
@@ -108,7 +110,6 @@ copy_files_from_vm() {
   rsync -avuzrtopgh \
     "$SSH_HOST:/export/home/solaris/$CURRENT_DIR_BASENAME/*" \
     $PWD
-  ls
 }
 
 run_prepare() {
