@@ -43,7 +43,7 @@ jobs:
 ## Arguments
 
 - ``run`` (*required*): Commands to run, in multiple lines.
-- ``prepare``: Optional preparation commands run in the Solaris VM before main
+- ``prepare``: Optional preparation commands to run in the Solaris VM before main
  execution.
 - ``cpus`` (1): Number of CPUs for the virtual machine.
 - ``memory`` (4096): RAM memory size for the virtual machine.
