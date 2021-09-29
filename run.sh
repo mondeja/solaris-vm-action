@@ -34,7 +34,9 @@ extract_ova_parts() {
 
 download_ova_parts() {
   clean_ova_parts
-  curl -Z \
+  curl \
+    --http1.1 \
+    --parallel \
     --parallel-max 32 \
     $OVA_URL \
     -o 'sol-11_4-part#1.zip'
