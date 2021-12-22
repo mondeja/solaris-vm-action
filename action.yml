@@ -1,4 +1,4 @@
-name: Solaris VM
+name: Solaris Virtual Machine
 description: Run your workflow job on a Solaris VM.
 author: mondeja
 inputs:
