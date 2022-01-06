@@ -20,7 +20,7 @@ on:
 jobs:
   sunos-tests:
     name: Solaris (SunOS) tests
-    runs-on: macos-latest
+    runs-on: macos-10.15
     steps:
       - uses: actions/checkout@v2
       - uses: actions/cache@v2
