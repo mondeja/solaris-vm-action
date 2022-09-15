@@ -22,8 +22,8 @@ jobs:
     name: Solaris (SunOS) tests
     runs-on: macos-10.15
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/cache@v2
+      - uses: actions/checkout@v3
+      - uses: actions/cache@v3
         with:
           key: sol-11_4
           path: |
