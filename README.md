@@ -49,7 +49,7 @@ jobs:
 - ``memory`` (4096): RAM memory size for the virtual machine.
 
 
-[tests-image]: https://img.shields.io/github/workflow/status/mondeja/solaris-vm-action/CI/v1?label=tests&logo=github
+[tests-image]: https://img.shields.io/github/actions/workflow/status/mondeja/solaris-vm-action/ci.yml?branch=master&label=tests&logo=github
 [tests-link]: https://github.com/mondeja/solaris-vm-action/actions/workflows/ci.yml
 [actions-cache-github-link]: https://github.com/actions/cache
 [cache-limits-link]: https://github.com/actions/cache#cache-limits
